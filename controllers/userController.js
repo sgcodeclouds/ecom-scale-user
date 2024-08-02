@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel')
+const roleModel = require('../models/roleModel')
 // const emailUtils = require('../utils/emailUtil')
 const appUtil = require('../utils/appUtil')
 
@@ -32,6 +33,26 @@ const createUser = async (req, res) => {
         return;
     }
     
+    const userA = await userModel.findOne({ email: req.body.email });
+    if (userA != null) {
+        return res.status(200).json({ message: 'Alreadt exist user' });
+    }
+
+    try {
+        roleD = await roleModel.findById(req.body.role);
+        if (roleD == null) {
+            return res.status(404).json({ message: 'Cannot find role' });
+        }
+    } catch (err) {
+        //return res.status(500).json({ message: err.message });
+    }
+
+    // role =  roleModel.findById(req.body.role);
+    // console.log(role)
+    // if (role == null) {
+    //     return res.status(404).json({ message: 'Cannot find role' });
+    // }
+
     const user = new userModel({
         name: req.body.name,
         email: req.body.email,
